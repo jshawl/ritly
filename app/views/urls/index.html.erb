@@ -1,0 +1,11 @@
+<%= form_for @url do |u| %>
+  <%= u.label :link %>
+  <%= u.text_field :link %>
+  <%= u.submit %>
+<% end %>
+
+<% if @urls %>
+  <% @urls.each do |u| %>
+    <%= u.link %>
+  <% end %>
+<% end %>
