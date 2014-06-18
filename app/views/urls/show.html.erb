@@ -2,4 +2,4 @@
 <br><br>
 
 <%= link_to @url.hashed , '/'+@url.hashed %> => <%= link_to @url.link, @url.link %>
-| <%= link_to "x", url_path, :method=> :delete %>
+| <%= link_to "x", url_path( @url ), :method=> :delete %>

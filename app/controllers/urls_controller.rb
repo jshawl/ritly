@@ -20,6 +20,10 @@ class UrlsController < ApplicationController
     @url = Url.find( params[:id] )
   end
 
+  def preview
+    @url = Url.find_by( hashed:  params[:code] )
+  end
+
   def redirectors
     @url = Url.find_by( hashed:  params[:code] )
     redirect_to @url.link
