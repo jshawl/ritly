@@ -8,6 +8,8 @@ group :development, :test do
   gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
+gem 'rails_serve_static_assets'
+
 gem 'pg'
 
 gem 'devise', '3.0.0'
