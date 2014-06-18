@@ -8,6 +8,8 @@ group :development, :test do
   gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
+gem 'pg'
+
 gem 'devise', '3.0.0'
 
 # Use SCSS for stylesheets
