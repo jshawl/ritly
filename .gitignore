@@ -16,3 +16,6 @@
 /tmp
 
 .DS_Store
+
+# Ignore User data
+public/
