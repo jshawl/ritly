@@ -1,6 +1,6 @@
 class UrlsController < ApplicationController
 
-  before_action :authenticate_user!, :except => :redirectors
+  before_action :authenticate_user!, :except => [:redirectors, :preview]
 
   def index
     p user_signed_in?
@@ -13,15 +13,25 @@ class UrlsController < ApplicationController
     hashed = Digest::SHA1.hexdigest @url.link 
     @url.hashed = hashed[0..3]
     @url.save
+    p fetch @url.link
     redirect_to urls_path
+  end
+
+  def fetch( link )
+    `cd public && wget -E -H -k -K -p #{link}`
   end
 
   def show
     @url = Url.find( params[:id] )
   end
 
+  def preview
+    @url = Url.find_by_hashed( params[:code] )
+    @path = @url.link.sub('https://','').sub('http://','')
+  end
+
   def redirectors
-    @url = Url.find_by( hashed:  params[:code] )
+    @url = Url.find_by_hashed( params[:code] )
     redirect_to @url.link
   end
 

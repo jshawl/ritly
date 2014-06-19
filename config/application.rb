@@ -3,7 +3,6 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 require 'digest/sha1'
 
-config.serve_static_assets = true
 
 
 # Require the gems listed in Gemfile, including any gems

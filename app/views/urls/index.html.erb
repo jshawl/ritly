@@ -6,7 +6,7 @@
 
 <% if @urls %>
   <% @urls.each do |u| %>
-  <%= link_to u.hashed , '/'+u.hashed %> => <%= link_to u.link, u.link %>
+  <%= link_to u.hashed , '/'+u.hashed+'/p' %> => <%= link_to u.link, u.link %>
   | <%= link_to "x", url_path( u ), :method=> :delete %>
     <br>
   <% end %>
