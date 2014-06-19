@@ -18,7 +18,7 @@ class UrlsController < ApplicationController
   end
 
   def fetch( link )
-    `cd ../../public/ && wget -E -H -k -K -p #{link}`
+    `cd public && wget -E -H -k -K -p #{link}`
   end
 
   def show
