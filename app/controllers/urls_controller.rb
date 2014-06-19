@@ -10,8 +10,6 @@ class UrlsController < ApplicationController
 
   def create
     @url = Url.new( url_params )
-    hashed = Digest::SHA1.hexdigest @url.link 
-    @url.hashed = hashed[0..3]
     @url.save
     redirect_to urls_path
   end

@@ -1,2 +1,3 @@
 <%= @url.inspect %>
-<iframe src='<%= @url.link %>'></iframe>
+<% @path = @url.link.sub('https://','').sub('http://','') %>
+<iframe src='/<%= @path %>.html'></iframe>
