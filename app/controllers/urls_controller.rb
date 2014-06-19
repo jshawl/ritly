@@ -26,11 +26,12 @@ class UrlsController < ApplicationController
   end
 
   def preview
-    @url = Url.find_by( hashed:  params[:code] )
+    @url = Url.find_by_hashed( params[:code] )
+    @path = @url.link.sub('https://','').sub('http://','')
   end
 
   def redirectors
-    @url = Url.find_by( hashed:  params[:code] )
+    @url = Url.find_by_hashed( params[:code] )
     redirect_to @url.link
   end
 
