@@ -10,8 +10,15 @@ class UrlsController < ApplicationController
 
   def create
     @url = Url.new( url_params )
+    hashed = Digest::SHA1.hexdigest @url.link 
+    @url.hashed = hashed[0..3]
     @url.save
+    p fetch @url.link
     redirect_to urls_path
+  end
+
+  def fetch( link )
+    `cd ../../public/ && wget -E -H -k -K -p #{link}`
   end
 
   def show
