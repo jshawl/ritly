@@ -1,6 +1,6 @@
 class UrlsController < ApplicationController
 
-  before_action :authenticate_user!, :except => :redirectors
+  before_action :authenticate_user!, :except => [:redirectors, :preview]
 
   def index
     p user_signed_in?

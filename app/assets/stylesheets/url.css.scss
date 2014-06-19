@@ -29,8 +29,29 @@ header{
   h1{
     margin:0;
   }
+  a{
+    color:#fff;
+    text-decoration:none;
+  }
 }
 
 form{
   margin-top:100px;
+}
+
+.cv{
+  position:absolute;
+  top:50%;
+  padding:0 1em;
+  -webkit-transform:translateY(-50%);
+  transform:translateY(-50%);
+}
+
+.left{
+  left:0;
+}
+
+.right{
+  right:0;
+
 }
