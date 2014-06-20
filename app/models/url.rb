@@ -13,15 +13,18 @@ class Url < ActiveRecord::Base
   end
 
   def save_html
+    Dir.mkdir( @path ) unless Dir.exist?( @path )
     @doc.css("[rel='stylesheet']").each do |node|
       node.remove
     end
-    FileUtils.mkdir_p( File.dirname(@path+ URI(@link).path) )
-    File.open(@path+ URI(@link).path, 'w') { |f| f.write(@doc.to_html) }
+    @html_path = @path+'/'+ Digest::MD5.hexdigest( @doc.to_html)+'.html'
+    File.open(@html_path, 'w') { |f| f.write(@doc.to_html) }
+    p @html_path
+    self.html_path = @html_path
+    self.html_path
   end
 
   def get_css
-    Dir.mkdir( @path ) unless Dir.exist?( @path )
     @css_tags = @doc.css('[rel="stylesheet"]').map { |l| URI.join( @link, l['href'] ).to_s }
     file = File.open( @path + @now + '.css','w') { | f |
       @css_tags.each do | c |
