@@ -1,8 +1,8 @@
 class Url < ActiveRecord::Base
-  attr_accessor :css
   before_save :get_css
 
   def get_css
+    hostname = URI( self.link ).host
     link = self.link
     now = Time.now.to_i.to_s
     @doc = Nokogiri::HTML(open( link ))
@@ -17,6 +17,6 @@ class Url < ActiveRecord::Base
     hash = Digest::MD5.hexdigest(File.read(now+'.css'))
     p hash
     File.rename(now+'.css', hash+".css")
-    self.css = hash+".css"
+    self.css = hostname+'/'+hash+".css"
   end
 end
