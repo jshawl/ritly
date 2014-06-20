@@ -13,6 +13,8 @@ class UrlsController < ApplicationController
     hashed = Digest::SHA1.hexdigest @url.link 
     @url.hashed = hashed[0..3]
     @url.save
+    p "css!!!!"
+    p @url.css
     redirect_to urls_path
   end
 
