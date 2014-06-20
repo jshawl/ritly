@@ -1,5 +1,7 @@
 class Url < ActiveRecord::Base
+  attr_accessor :css
   before_save :get_css
+
   def get_css
     link = self.link
     now = Time.now.to_i.to_s

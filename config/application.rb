@@ -2,10 +2,10 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 require 'digest/sha1'
-require 'nokigiri'
+require 'nokogiri'
 require 'net/http'
 require 'fileutils'
-require 'uri'
+require 'open-uri'
 
 
 

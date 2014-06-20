@@ -27,7 +27,6 @@ class UrlsController < ApplicationController
 
   def redirectors
     @url = Url.find_by_hashed( params[:code] )
-    redirect_to @url.link
   end
 
   def destroy
