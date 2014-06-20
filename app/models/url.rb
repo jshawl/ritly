@@ -8,7 +8,16 @@ class Url < ActiveRecord::Base
     @path = 'public/'+ @hostname
     @now = Time.now.to_i.to_s
     @doc = Nokogiri::HTML(open( @link ))
+    @html = save_html
     @css = get_css
+  end
+
+  def save_html
+    @doc.css("[rel='stylesheet']").each do |node|
+      node.remove
+    end
+    FileUtils.mkdir_p( File.dirname(@path+ URI(@link).path) )
+    File.open(@path+ URI(@link).path, 'w') { |f| f.write(@doc.to_html) }
   end
 
   def get_css
