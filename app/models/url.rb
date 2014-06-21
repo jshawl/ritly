@@ -8,32 +8,46 @@ class Url < ActiveRecord::Base
     @path = 'public/'+ @hostname
     @now = Time.now.to_i.to_s
     @doc = Nokogiri::HTML(open( @link ))
-    @html = save_html
+
+    Dir.mkdir( @path ) unless Dir.exist?( @path )
+
     @css = get_css
+    @html = save_html
   end
 
+  def checksum string
+    Digest::MD5.hexdigest string
+  end
+
+
   def save_html
-    Dir.mkdir( @path ) unless Dir.exist?( @path )
     @doc.css("[rel='stylesheet']").each do |node|
       node.remove
     end
-    @html_path = @path+'/'+ Digest::MD5.hexdigest( @doc.to_html)+'.html'
+    link = Nokogiri::XML::Node.new "link", @doc 
+    link['rel'] = 'stylesheet' 
+    link['href'] = '/' + @css
+    link['type'] = 'text/css' 
+    @doc.at_css('head') << link
+
+    @html_path = @path+'/'+ checksum( @doc.to_html)+'.html'
     File.open(@html_path, 'w') { |f| f.write(@doc.to_html) }
-    self.html_path = @hostname +  '/'+Digest::MD5.hexdigest( @doc.to_html)+'.html'
+    self.html_path = @hostname +  '/'+checksum( @doc.to_html)+'.html'
   end
 
   def get_css
     @css_tags = @doc.css('[rel="stylesheet"]').map { |l| URI.join( @link, l['href'] ).to_s }
-    file = File.open( @path + @now + '.css','w') { | f |
+    file = File.open( @path +'/'+ @now + '.css','w') { | f |
       @css_tags.each do | c |
 	contents = open(c).read
-	f.write( contents )
+	str = contents.encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '_')
+	Rails.logger.info(str) 
+	f.write( str )
       end
     }
-    hash = Digest::MD5.hexdigest(File.read(@path+@now+'.css'))
-    p hash
-    File.rename(@path+@now+'.css', @path+hash+".css")
-    self.css = @hostname+'/'+hash+".css"
-    self.css
+    hash = checksum(File.read(@path+'/'+@now+'.css'))
+    @css_path = @path+'/'+ hash + '.css'
+    FileUtils.mv(@path+'/'+@now+'.css', @css_path)
+    self.css = @hostname +  '/'+hash+'.css'
   end
 end
