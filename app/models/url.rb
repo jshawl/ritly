@@ -19,8 +19,7 @@ class Url < ActiveRecord::Base
     end
     @html_path = @path+'/'+ Digest::MD5.hexdigest( @doc.to_html)+'.html'
     File.open(@html_path, 'w') { |f| f.write(@doc.to_html) }
-    p @html_path
-    self.html_path = @html_path
+    self.html_path = @hostname +  '/'+Digest::MD5.hexdigest( @doc.to_html)+'.html'
   end
 
   def get_css
