@@ -22,7 +22,7 @@ class UrlsController < ApplicationController
 
   def preview
     @url = Url.find_by_hashed( params[:code] )
-    @path = @url.link.sub('https://','').sub('http://','')
+    @path = @url.html_path.split('/').drop(1).join('/')
   end
 
   def redirectors
