@@ -21,7 +21,6 @@ class Url < ActiveRecord::Base
     File.open(@html_path, 'w') { |f| f.write(@doc.to_html) }
     p @html_path
     self.html_path = @html_path
-    self.html_path
   end
 
   def get_css
