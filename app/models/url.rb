@@ -1,5 +1,6 @@
 class Url < ActiveRecord::Base
 
+  belongs_to :user
   before_save :fetch
 
   def fetch
