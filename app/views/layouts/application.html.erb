@@ -8,19 +8,29 @@
 </head>
 <body>
   <header>
-<h1 class='left cv'><a href='/'>p</a></h1>
+  <h1 class='left cv'>
+    <a href='/'>r</a>
+    <% if @last_updated %>
+      <small>Last Updated: <%= @last_updated %></small>
+    <% end %>
+  </h1>
 
 <div class='right cv'>
+  <small>
 <% if user_signed_in? %>
   <%= link_to "Logout "+ current_user.email, destroy_user_session_path, method: :delete, :class => 'navbar-link'  %>
 <% else %>
   <%= link_to "Sign up", new_user_registration_path, :class => 'navbar-link'  %> |
   <%= link_to "Login", new_user_session_path, :class => 'navbar-link'  %>
 <% end %>
+  </small>
 </div>
 </header>
 
+<section>
+
 <%= yield %>
 
+</section>
 </body>
 </html>

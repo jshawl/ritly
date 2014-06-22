@@ -13,12 +13,7 @@ class UrlsController < ApplicationController
     hashed = Digest::SHA1.hexdigest @url.link 
     @url.hashed = hashed[0..3]
     @url.save
-    p fetch @url.link
     redirect_to urls_path
-  end
-
-  def fetch( link )
-    `cd public && wget -E -H -k -K -p #{link}`
   end
 
   def show
@@ -27,12 +22,12 @@ class UrlsController < ApplicationController
 
   def preview
     @url = Url.find_by_hashed( params[:code] )
-    @path = @url.link.sub('https://','').sub('http://','')
+    @path = @url.html_path.split('/').drop(1).join('/')
+    @last_updated = @url.updated_at.strftime('%b %d, %Y')
   end
 
   def redirectors
     @url = Url.find_by_hashed( params[:code] )
-    redirect_to @url.link
   end
 
   def destroy
