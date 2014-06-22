@@ -11,16 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140621141418) do
+ActiveRecord::Schema.define(version: 20140622101012) do
 
   create_table "urls", force: true do |t|
     t.string   "link"
     t.text     "hashed"
     t.text     "css"
     t.text     "html_path"
+    t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "urls", ["user_id"], name: "index_urls_on_user_id"
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

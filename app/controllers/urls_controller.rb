@@ -5,12 +5,13 @@ class UrlsController < ApplicationController
   def index
     p user_signed_in?
     @url = Url.new
-    @urls = Url.all
+    @urls = Url.where( user_id: current_user.id )
   end
 
   def create
     @url = Url.new( url_params )
     hashed = Digest::SHA1.hexdigest @url.link 
+    @url.user_id = current_user.id
     @url.hashed = hashed[0..3]
     @url.save
     redirect_to urls_path

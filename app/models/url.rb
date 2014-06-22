@@ -1,5 +1,6 @@
 class Url < ActiveRecord::Base
 
+  belongs_to :user
   before_save :fetch
 
   def fetch
@@ -41,7 +42,6 @@ class Url < ActiveRecord::Base
       @css_tags.each do | c |
 	contents = open(c).read
 	str = contents.encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '_')
-	Rails.logger.info(str) 
 	f.write( str )
       end
     }
