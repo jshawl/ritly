@@ -23,6 +23,7 @@ class UrlsController < ApplicationController
   def preview
     @url = Url.find_by_hashed( params[:code] )
     @path = @url.html_path.split('/').drop(1).join('/')
+    @last_updated = @url.updated_at.strftime('%b %d, %Y')
   end
 
   def redirectors
