@@ -36,10 +36,9 @@ class Url < ActiveRecord::Base
   end
 
   def get_css
-    css_tags = get_css_tags
     timestamp = Time.now.to_i.to_s
     file = File.open( build_path( timestamp ) ,'w') do | f |
-      css_tags.each do | c |
+      get_css_tags.each do | c |
         contents = open(c).read
         str = contents.encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '_')
         f.write( str )
