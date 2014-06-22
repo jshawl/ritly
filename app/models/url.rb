@@ -10,9 +10,8 @@ class Url < ActiveRecord::Base
     @now = Time.now.to_i.to_s
     @doc = Nokogiri::HTML(open( @link ))
 
-    Dir.mkdir( @path ) unless Dir.exist?( @path )
+    make_directory
 
-    @css = get_css
     @html = save_html
   end
 
@@ -27,7 +26,7 @@ class Url < ActiveRecord::Base
     end
     link = Nokogiri::XML::Node.new "link", @doc 
     link['rel'] = 'stylesheet' 
-    link['href'] = '/' + @css
+    link['href'] = '/' + get_css
     link['type'] = 'text/css' 
     @doc.at_css('head') << link
 
@@ -37,17 +36,34 @@ class Url < ActiveRecord::Base
   end
 
   def get_css
-    @css_tags = @doc.css('[rel="stylesheet"]').map { |l| URI.join( @link, l['href'] ).to_s }
-    file = File.open( @path +'/'+ @now + '.css','w') { | f |
-      @css_tags.each do | c |
-	contents = open(c).read
-	str = contents.encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '_')
-	f.write( str )
+    css_tags = get_css_tags
+    timestamp = Time.now.to_i.to_s
+    file = File.open( build_path( timestamp ) ,'w') do | f |
+      css_tags.each do | c |
+        contents = open(c).read
+        str = contents.encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '_')
+        f.write( str )
       end
-    }
-    hash = checksum(File.read(@path+'/'+@now+'.css'))
-    @css_path = @path+'/'+ hash + '.css'
-    FileUtils.mv(@path+'/'+@now+'.css', @css_path)
-    self.css = @hostname +  '/'+hash+'.css'
+    end
+
+    hash = checksum(File.read( build_path( timestamp ) ))
+    FileUtils.mv(build_path( timestamp ), build_path( hash ))
+    self.css = "#{URI( self.link ).host}/#{hash}.css"
+  end
+
+  def build_path(identifier = nil)
+    path = "public/#{URI(self.link).host}"
+    path += "/#{identifier}.css" if identifier
+    path
+  end
+
+  def get_css_tags
+    Nokogiri::HTML(open( link )).css('[rel="stylesheet"]').map do |l| 
+      URI.join( link, l['href'] ).to_s 
+    end
+  end
+
+  def make_directory
+    Dir.mkdir( build_path ) unless Dir.exist?( build_path )
   end
 end
