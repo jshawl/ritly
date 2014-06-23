@@ -56,6 +56,6 @@ class Url < ActiveRecord::Base
   end
 
   def make_directory
-    Dir.mkdir( build_path ) unless Dir.exist?( build_path )
+    FileUtils.mkdir_p( build_path ) unless Dir.exist?( build_path )
   end
 end
