@@ -3,9 +3,8 @@ class UrlsController < ApplicationController
   before_action :authenticate_user!, :except => [:redirectors, :preview]
 
   def index
-    p user_signed_in?
     @url = Url.new
-    @urls = Url.where( user_id: current_user.id )
+    @urls = current_user.urls
   end
 
   def create
