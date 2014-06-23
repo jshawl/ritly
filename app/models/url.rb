@@ -1,43 +1,26 @@
 class Url < ActiveRecord::Base
 
+  before_save :make_directory, :save_html
   belongs_to :user
-  before_save :fetch
-
-  def fetch
-    @link = self.link
-    @hostname = URI( @link ).host
-    @path = 'public/'+ @hostname
-    @now = Time.now.to_i.to_s
-    @doc = Nokogiri::HTML(open( @link ))
-
-    make_directory
-
-    @html = save_html
-  end
-
-  def checksum string
-    Digest::MD5.hexdigest string
-  end
-
 
   def save_html
-    @doc.css("[rel='stylesheet']").each do |node|
-      node.remove
-    end
-    link = Nokogiri::XML::Node.new "link", @doc 
+    doc = get_doc
+    doc.css("[rel='stylesheet']").each {|node| node.remove}
+  
+    link = Nokogiri::XML::Node.new "link", doc 
+  
     link['rel'] = 'stylesheet' 
     link['href'] = '/' + get_css
-    link['type'] = 'text/css' 
-    @doc.at_css('head') << link
+    link['type'] = 'text/css'
+    doc.at_css('head') << link
 
-    @html_path = @path+'/'+ checksum( @doc.to_html)+'.html'
-    File.open(@html_path, 'w') { |f| f.write(@doc.to_html) }
-    self.html_path = @hostname +  '/'+checksum( @doc.to_html)+'.html'
+    File.open( build_path( checksum( doc.to_html) , 'html' ), 'w') { |f| f.write(doc.to_html) }
+    self.html_path = "#{URI( self.link ).host}/#{checksum( doc.to_html)}.html"
   end
 
   def get_css
     timestamp = Time.now.to_i.to_s
-    file = File.open( build_path( timestamp ) ,'w') do | f |
+    file = File.open( build_path( timestamp, 'css' ) ,'w') do | f |
       get_css_tags.each do | c |
         contents = open(c).read
         str = contents.encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '_')
@@ -45,19 +28,29 @@ class Url < ActiveRecord::Base
       end
     end
 
-    hash = checksum(File.read( build_path( timestamp ) ))
-    FileUtils.mv(build_path( timestamp ), build_path( hash ))
+    hash = checksum(File.read( build_path( timestamp, 'css' ) ))
+    FileUtils.mv(build_path( timestamp, 'css' ), build_path( hash, 'css' ))
     self.css = "#{URI( self.link ).host}/#{hash}.css"
   end
 
-  def build_path(identifier = nil)
+  private 
+
+  def get_doc
+    Nokogiri::HTML(open( self.link ))
+  end
+
+  def checksum string
+    Digest::MD5.hexdigest string
+  end
+
+  def build_path(identifier = nil, file_type = nil)
     path = "public/#{URI(self.link).host}"
-    path += "/#{identifier}.css" if identifier
+    path += "/#{identifier}.#{file_type}" if identifier
     path
   end
 
   def get_css_tags
-    Nokogiri::HTML(open( link )).css('[rel="stylesheet"]').map do |l| 
+    Nokogiri::HTML(open( self.link )).css('[rel="stylesheet"]').map do |l| 
       URI.join( link, l['href'] ).to_s 
     end
   end
