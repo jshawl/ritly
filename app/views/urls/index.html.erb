@@ -4,6 +4,17 @@
   <%= u.submit %>
 <% end %>
 
+<%= form_tag({action: :upload}, multipart: true) do %>
+  <%= file_field_tag 'file' %>
+  <%= submit_tag %>
+<% end %>
+
+<% if @client %>
+  <%= @client.inspect %>
+<% else %>
+  <%= link_to 'Login with Dropbox', @authorize_url %>
+<% end %>
+
 <% if @urls %>
   <% @urls.each do |u| %>
   <%= link_to u.hashed , '/'+u.hashed %> => <%= link_to u.link, u.link %>

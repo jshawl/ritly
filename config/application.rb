@@ -6,7 +6,7 @@ require 'nokogiri'
 require 'net/http'
 require 'fileutils'
 require 'open-uri'
-
+require 'dropbox_sdk'
 
 
 # Require the gems listed in Gemfile, including any gems
